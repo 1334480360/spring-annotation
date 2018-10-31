@@ -1,1 +1,46 @@
-spring注解开发练习
+#### spring注解开发练习
+
+1. AnnotationConfigApplicationContext
+    1. 配置类
+    2. 包扫描
+2. 组件添加
+    1. @ComponentScan
+    2. @Bean
+        1. 指定初始化销毁
+        2. 初始化其他方式
+            1. InitializingBean（初始化赋值之后）
+            2. DisposableBean（销毁）
+            3. JSR250
+                1. @PostConstruct
+                2. @PreDestroy
+        3. BeanPostProcessor
+    3. @Configuration
+    4. @Component
+    5. @Service
+    6. @Controller
+    7. @Repository
+    8. @Conditional
+    9. @Primary
+    10. @Lazy
+    11. @Scope
+    12. @Import
+    13. ImportSelector
+    14. 工厂模式（FactoryBean）
+3. 组件赋值
+    1. @Value
+    2. @Autowired
+	    1. @Qualifier
+	    2. 其他方式
+		    1. @Resources（JSR250）
+		    2. @Inject（JSR330，需要导入javax.inject）
+    3. @PropertySource
+    4. @PropertySources
+    5. @Profile
+	    1. Environment
+	    2. -Dspring.profiles.active=test 
+4. 组件注入
+    1. 方法参数
+    2. 构造器注入
+    3. ApplicationContextAware
+    	1. ApplicationContextAwareProcessor
+    4. xxxAware
