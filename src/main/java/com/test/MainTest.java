@@ -1,7 +1,7 @@
 package com.test;
 
-import com.test.bean.Person;
-import com.test.config.MainConfig;
+import com.test.bean.ioc.Person;
+import com.test.config.ioc.MainConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

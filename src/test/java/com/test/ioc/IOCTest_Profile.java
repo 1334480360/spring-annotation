@@ -1,6 +1,6 @@
-package com.test;
+package com.test.ioc;
 
-import com.test.config.MainConfigOfProfile;
+import com.test.config.ioc.MainConfigOfProfile;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

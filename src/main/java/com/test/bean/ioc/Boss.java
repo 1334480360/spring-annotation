@@ -1,10 +1,11 @@
-package com.test.bean;
+package com.test.bean.ioc;
 
+import com.test.bean.BaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Boss extends BaseEntity{
+public class Boss extends BaseEntity {
 
 	private Car car;
 

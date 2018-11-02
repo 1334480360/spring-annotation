@@ -133,7 +133,7 @@ IOC
     	@Override
     	public String[] selectImports(AnnotationMetadata annotationMetadata) {
     
-    		return new String[]{"com.test.bean.Blue", "com.test.bean.Yellow"};
+    		return new String[]{"com.test.bean.ioc.Blue", "com.test.bean.ioc.Yellow"};
     	}
     }
     ```
@@ -575,3 +575,309 @@ IOC
     	}
         ```
     4. `@Profile`也可以配置在类上。
+
+### AOP
+---
+1. **@Aspect**：标记为切面类
+    1. 导入aop依赖包：
+    ```
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <version>4.3.12.RELEASE</version>
+    </dependency>
+    ```
+    2. 创建切面类：
+    ```
+    /**
+     * 日志切面类
+     *
+     * @author xuan
+     * @date 2018/11/1
+     */
+    @Aspect
+    public class LogAspects {
+    	/**
+    	 * 公共的切入点表达式
+    	 * 1、本类引用
+    	 * 2、其他的切面引用
+    	 *
+    	 * @author xuan
+    	 * @date 2018/11/1
+    	 */
+    	@Pointcut(value = "execution(public int com.test.aop.MathCalculator.*(..))")
+    	public void pointCut(){}
+    
+    	/**
+    	 * 前置通知
+    	 *
+    	 * 在目标方法之前切入，切入点表达式（指在哪个方法切入）
+    	 * joinPoint参数一定要出现在参数列表第一位，放在后面会报错
+    	 *
+    	 * @author xuan
+    	 * @date 2018/11/1
+    	 */
+    	@Before(value = "pointCut()")
+    	public void logStart(JoinPoint joinPoint) {
+    		String methodName = joinPoint.getSignature().getName();
+    		Object[] args = joinPoint.getArgs();
+    		System.out.println(methodName + "运行。。。参数列表是：" + Arrays.toString(args));
+    	}
+    
+    	@After(value = "pointCut()")
+    	public void logEnd() {
+    		System.out.println("除法结束。。。");
+    	}
+    
+    	@AfterReturning(value = "pointCut()", returning = "result")
+    	public void logReturn(JoinPoint joinPoint, Object result) {
+    		String methodName = joinPoint.getSignature().getName();
+    		System.out.println(methodName + "正常返回。。。计算结果：" + result);
+    	}
+    
+    	@AfterThrowing(value = "pointCut()", throwing = "exception")
+    	public void logException(JoinPoint joinPoint, Exception exception){
+    		String methodName = joinPoint.getSignature().getName();
+    		System.out.println(methodName + "异常，异常信息：" + exception);
+    	}
+    
+    }
+    ```
+    >通知方法类型：
+    >1. 前置通知（logStart）：在目标方法运行之前运行；
+    >2. 后置通知（logEnd）：在目标方法运行结束之后运行；
+    >3. 返回通知（logReturn）：在目标方法正常返回之后运行；
+    >4. 异常通知（logException）：在目标方法出现异常是运行；
+    >5. 环绕通知（动态代理）：手动推荐目标方法运行（joinPoint.procced()）。
+    
+    3. 将切面类和目标类都加入到容器中，并开启基于注解的aop动态代理：
+    ```
+    public class MathCalculator {
+    	public int div(int i, int j) {
+    		System.out.println("MathCalculator.div.....");
+    		return i/j;
+    	}
+    
+    }
+    
+    
+    /**
+     * aop
+     *  在程序运行期间动态的将某段代码切入到指定方法指定位置进行运行的编程方式
+     * '@EnableAspectJAutoProxy'：开启基于注解的aop动态代理
+     *
+     * @author xuan
+     * @date 2018/11/1
+     */
+    @Configuration
+    @EnableAspectJAutoProxy
+    public class MainConfigOfAOP {
+    
+    	/**
+    	 * 业务逻辑类加入容器中
+    	 *
+    	 * @author xuan
+    	 * @date 2018/11/1
+    	 */
+    	@Bean
+    	public MathCalculator calculator() {
+    		return new MathCalculator();
+    	}
+    
+    	/**
+    	 * 切面类加入容器中
+    	 *
+    	 * @author xuan
+    	 * @date 2018/11/1
+    	 */
+    	@Bean
+    	public LogAspects logAspects(){
+    		return new LogAspects();
+    	}
+    
+    }
+    
+    ```
+    4. 测试： 
+    ```
+    @Test
+	public void test01() { 
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MainConfigOfAOP.class);
+		MathCalculator calculator = applicationContext.getBean(MathCalculator.class);
+		calculator.div(1, 0);
+	}
+    ```
+2. **aop原理**：
+    1. `@EnableAspectJAutoProxy`注解作用：
+        1. `@Import(AspectJAutoProxyRegistrar.class)`：给容器中导入`AspectJAutoProxyRegistrar`。利用`AspectJAutoProxyRegistrar`给容器中注册bean（注册了`AnnotationAwareAspectJAutoProxyCreator`创建器）。
+        2. `AnnotationAwareAspectJAutoProxyCreator`继承结构：
+            1. 继承结构：
+            ```
+            AnnotationAwareAspectJAutoProxyCreator
+                ->AspectJAwareAdvisorAutoProxyCreator
+                    ->AbstractAdvisorAutoProxyCreator
+                        ->AbstractAutoProxyCreator
+                            ->ProxyProcessorSupport
+                            implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware
+            ```
+            2. `AbstractAutoProxyCreator`重要方法：
+                1. `setBeanFactory(BeanFactory beanFactory)`
+                2. `postProcessBeforeInstantiation()` && `postProcessAfterInstantiation()`后置处理器方法
+            3. `AbstractAdvisorAutoProxyCreator`重要方法：
+                1. `setBeanFactory(BeanFactory beanFactory)`
+                2. `initBeanFactory(ConfigurableListableBeanFactory beanFactory)`
+            4. `AnnotationAwareAspectJAutoProxyCreator`重要方法：
+                1. `initBeanFactory(ConfigurableListableBeanFactory beanFactory)`
+        3. 方法调用流程：
+            1. 传入配置类，创建ioc容器；
+            2. 注册配置类，调用AbstractApplicationContext.refresh()，创建spring容器配置：
+            ```
+            public void refresh() throws BeansException, IllegalStateException {
+        		synchronized (this.startupShutdownMonitor) {
+        			// Prepare this context for refreshing.
+        			prepareRefresh();
+        
+        			// Tell the subclass to refresh the internal bean factory.
+        			//主要是创建beanFactory，同时加载配置文件.xml中的beanDefinition
+			        //通过String[] configLocations = getConfigLocations()获取资源路径，然后加载beanDefinition
+        			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+        
+        			// Prepare the bean factory for use in this context.
+        			// 给beanFactory注册一些标准组件，如ClassLoader，BeanPostProcess
+        			prepareBeanFactory(beanFactory);
+        
+        			try {
+        				// Allows post-processing of the bean factory in context subclasses.
+                        //提供给子类实现一些postProcess的注册，如AbstractRefreshableWebApplicationContext注册一些Servlet相关的
+				        //postProcess，真对web进行生命周期管理的Scope，通过registerResolvableDependency()方法注册指定ServletRequest，HttpSession，WebRequest对象的工厂方法
+        				postProcessBeanFactory(beanFactory);
+        
+        				// Invoke factory processors registered as beans in the context.
+        				//调用所有BeanFactoryProcessor的postProcessBeanFactory()方法
+        				invokeBeanFactoryPostProcessors(beanFactory);
+        
+        				// Register bean processors that intercept bean creation.
+        				//注册BeanPostProcessor，BeanPostProcessor作用是用于拦截Bean的创建
+        				registerBeanPostProcessors(beanFactory);
+        
+        				// Initialize message source for this context.
+        				//初始化消息Bean
+        				initMessageSource();
+        
+        				// Initialize event multicaster for this context.
+        				//初始化上下文的事件多播组件，ApplicationEvent触发时由multicaster通知给ApplicationListener
+        				initApplicationEventMulticaster();
+        
+        				// Initialize other special beans in specific context subclasses.
+        				//ApplicationContext初始化一些特殊的bean
+        				onRefresh();
+        
+        				// Check for listener beans and register them.
+        				//注册事件监听器，事件监听Bean统一注册到multicaster里头，ApplicationEvent事件触发后会由multicaster广播
+        				registerListeners();
+        
+        				// Instantiate all remaining (non-lazy-init) singletons.
+        				//非延迟加载的单例Bean实例化
+        				finishBeanFactoryInitialization(beanFactory);
+        
+        				// Last step: publish corresponding event.
+        				finishRefresh();
+        			}
+        
+        			catch (BeansException ex) {
+        				if (logger.isWarnEnabled()) {
+        					logger.warn("Exception encountered during context initialization - " +
+        							"cancelling refresh attempt: " + ex);
+        				}
+        
+        				// Destroy already created singletons to avoid dangling resources.
+        				destroyBeans();
+        
+        				// Reset 'active' flag.
+        				cancelRefresh(ex);
+        
+        				// Propagate exception to caller.
+        				throw ex;
+        			}
+        
+        			finally {
+        				// Reset common introspection caches in Spring's core, since we
+        				// might not ever need metadata for singleton beans anymore...
+        				resetCommonCaches();
+        			}
+        		}
+        	}
+            ```
+        4. 注册BeanPostProcessor：
+            >1. 【BeanPostProcessor是在bean对象创建完成初始化前后调用的】
+            >2. 【InstantiationAwareBeanPostProcessor是在创建Bean实例之前先尝试用后置处理器返回对象】
+            >3. 【AnnotationAwareAspectJAutoProxyCreator实现了InstantiationAwareBeanPostProcessor】
+        
+        5. 每一个bean创建之前，调用postProcessBeforeInstantiation()：
+        ```
+        public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        	Object cacheKey = getCacheKey(beanClass, beanName);
+        
+        	if (beanName == null || !this.targetSourcedBeans.contains(beanName)) {
+        		if (this.advisedBeans.containsKey(cacheKey)) {
+        			return null;
+        		}
+        		if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
+        			this.advisedBeans.put(cacheKey, Boolean.FALSE);
+        			return null;
+        		}
+        	}
+        
+        	// Create proxy here if we have a custom TargetSource.
+        	// Suppresses unnecessary default instantiation of the target bean:
+        	// The TargetSource will handle target instances in a custom fashion.
+        	if (beanName != null) {
+        		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
+        		if (targetSource != null) {
+        			this.targetSourcedBeans.add(beanName);
+        			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
+        			Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
+        			this.proxyTypes.put(cacheKey, proxy.getClass());
+        			return proxy;
+        		}
+        	}
+        
+        	return null;
+        }
+        ```
+        6. 创建对象后，调用postProcessAfterInitialization();return wrapIfNecessary(bean, beanName, cacheKey)来判断对象是否要包装：
+        ```
+        /**
+         * Wrap the given bean if necessary, i.e. if it is eligible for being proxied.
+         * @param bean the raw bean instance
+         * @param beanName the name of the bean
+         * @param cacheKey the cache key for metadata access
+         * @return a proxy wrapping the bean, or the raw bean instance as-is
+         */
+        protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+        	if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
+        		return bean;
+        	}
+        	if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+        		return bean;
+        	}
+        	if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+        		this.advisedBeans.put(cacheKey, Boolean.FALSE);
+        		return bean;
+        	}
+        
+        	// Create proxy if we have advice.
+        	Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+        	if (specificInterceptors != DO_NOT_PROXY) {
+        		this.advisedBeans.put(cacheKey, Boolean.TRUE);
+        		Object proxy = createProxy(
+        				bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+        		this.proxyTypes.put(cacheKey, proxy.getClass());
+        		return proxy;
+        	}
+        
+        	this.advisedBeans.put(cacheKey, Boolean.FALSE);
+        	return bean;
+        }
+        ```
+        如果对象需要包装，则给容器返回当前组件使用cglib增强了的代理对象，以后容器中获取到的就是这个组件的代理对象，执行目标方法的时候，代理对象就会执行通知方法的流程。

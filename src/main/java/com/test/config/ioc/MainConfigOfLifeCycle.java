@@ -1,6 +1,6 @@
-package com.test.config;
+package com.test.config.ioc;
 
-import com.test.bean.Car;
+import com.test.bean.ioc.Car;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

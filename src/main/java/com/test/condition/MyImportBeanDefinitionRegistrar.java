@@ -1,6 +1,6 @@
 package com.test.condition;
 
-import com.test.bean.RainBow;
+import com.test.bean.ioc.RainBow;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -21,8 +21,8 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
 	 */
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
-		boolean definition = registry.containsBeanDefinition("com.test.bean.Red");
-		boolean definition2 = registry.containsBeanDefinition("com.test.bean.Blue");
+		boolean definition = registry.containsBeanDefinition("com.test.bean.ioc.Red");
+		boolean definition2 = registry.containsBeanDefinition("com.test.bean.ioc.Blue");
 
 		if (definition && definition2) {
 			RootBeanDefinition beanDefinition = new RootBeanDefinition(RainBow.class);

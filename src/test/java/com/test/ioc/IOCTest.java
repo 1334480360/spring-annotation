@@ -1,9 +1,8 @@
-package com.test;
+package com.test.ioc;
 
-import com.test.bean.Blue;
-import com.test.bean.Person;
-import com.test.config.MainConfig;
-import com.test.config.MainConfig2;
+import com.test.bean.ioc.Person;
+import com.test.config.ioc.MainConfig;
+import com.test.config.ioc.MainConfig2;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

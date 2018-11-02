@@ -1,9 +1,9 @@
-package com.test.config;
+package com.test.config.ioc;
 
-import com.test.bean.Color;
-import com.test.bean.ColorFactoryBean;
-import com.test.bean.Person;
-import com.test.bean.Red;
+import com.test.bean.ioc.Color;
+import com.test.bean.ioc.ColorFactoryBean;
+import com.test.bean.ioc.Person;
+import com.test.bean.ioc.Red;
 import com.test.condition.MacCondition;
 import com.test.condition.MyImportBeanDefinitionRegistrar;
 import com.test.condition.MyImportSelector;

@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.ioc;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotationMetadata;

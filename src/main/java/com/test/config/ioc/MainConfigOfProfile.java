@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.ioc;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.springframework.beans.factory.annotation.Value;

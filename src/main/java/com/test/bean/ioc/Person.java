@@ -1,8 +1,9 @@
-package com.test.bean;
+package com.test.bean.ioc;
 
+import com.test.bean.BaseEntity;
 import org.springframework.beans.factory.annotation.Value;
 
-public class Person extends BaseEntity{
+public class Person extends BaseEntity {
 	@Value("xuan")
 	private String name;
 	@Value("27")

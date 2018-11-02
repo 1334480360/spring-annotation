@@ -1,6 +1,6 @@
-package com.test;
+package com.test.ioc;
 
-import com.test.config.MainConfigOfLifeCycle;
+import com.test.config.ioc.MainConfigOfLifeCycle;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

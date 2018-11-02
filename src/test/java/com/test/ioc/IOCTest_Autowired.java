@@ -1,9 +1,7 @@
-package com.test;
+package com.test.ioc;
 
-import com.test.bean.Boss;
-import com.test.config.MainConfigOfAutowired;
-import com.test.dao.BookDao;
-import com.test.service.BookService;
+import com.test.bean.ioc.Boss;
+import com.test.config.ioc.MainConfigOfAutowired;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

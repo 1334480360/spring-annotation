@@ -1,12 +1,10 @@
-package com.test.config;
+package com.test.config.ioc;
 
-import com.test.bean.Person;
+import com.test.bean.ioc.Person;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 
 /**
  * @title：配置类 == spring配置文件

@@ -1,6 +1,6 @@
-package com.test.config;
+package com.test.config.ioc;
 
-import com.test.bean.Person;
+import com.test.bean.ioc.Person;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

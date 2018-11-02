@@ -1,5 +1,6 @@
-package com.test.bean;
+package com.test.bean.ioc;
 
+import com.test.bean.BaseEntity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;

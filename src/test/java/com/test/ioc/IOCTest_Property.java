@@ -1,7 +1,7 @@
-package com.test;
+package com.test.ioc;
 
-import com.test.bean.Person;
-import com.test.config.MainConfigOfPropertyValues;
+import com.test.bean.ioc.Person;
+import com.test.config.ioc.MainConfigOfPropertyValues;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

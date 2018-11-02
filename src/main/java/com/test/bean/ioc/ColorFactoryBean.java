@@ -1,4 +1,4 @@
-package com.test.bean;
+package com.test.bean.ioc;
 
 import org.springframework.beans.factory.FactoryBean;
 

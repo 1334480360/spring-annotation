@@ -18,6 +18,6 @@ public class MyImportSelector implements ImportSelector {
 	@Override
 	public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
-		return new String[]{"com.test.bean.Blue", "com.test.bean.Yellow"};
+		return new String[]{"com.test.bean.ioc.Blue", "com.test.bean.ioc.Yellow"};
 	}
 }
